@@ -1,11 +1,28 @@
 
-  
-apiVersion: v1
-kind: Secret
+  apiVersion: apps/v1 
+kind: Deployment
 metadata:
-  name: mysqlsecret
-type: Opaque
-data:
-  password : cm9bdA==
-  
-  
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+       env:
+      - name: passoword
+        valueFrom:
+          secretKeyRef:
+            name: mysqlsecret
+            key: password
+        ports:
+        - containerPort: 3306
+          name: mysql
